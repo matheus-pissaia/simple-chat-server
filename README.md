@@ -1,4 +1,4 @@
-# Chat server with multiple rooms
+# Simple Chat Server
 
 TODO add description
 
