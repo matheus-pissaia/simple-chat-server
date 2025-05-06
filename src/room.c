@@ -33,7 +33,7 @@ void init_rooms()
 Room *get_room(const int *room_id)
 {
     for (int i = 0; i < MAX_ROOMS; i++)
-        if (rooms[i].id == room_id)
+        if (rooms[i].id == *room_id)
             return &rooms[i];
 
     return NULL;
