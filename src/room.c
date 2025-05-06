@@ -1,20 +1,12 @@
 #include <pthread.h>
-#include "client.c"
-#include "llist.c"
+#include "room.h"
+#include "client.h"
+#include "llist.h"
 
 #define MAX_ROOMS 10
 #define MAX_CLIENTS_PER_ROOM 10
 
 // TODO test code
-
-typedef struct
-{
-    int id;
-    LinkedList *clients;
-    int client_count;
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
-} Room;
 
 Room rooms[MAX_ROOMS];
 

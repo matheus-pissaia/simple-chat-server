@@ -1,25 +1,23 @@
 #include <pthread.h>
 #include <stdlib.h>
+#include "client.h"
 
 #define MAX_CLIENTS 10
-
-typedef struct
-{
-    int socket_id;
-} Client;
 
 int clients_count = 0;
 Client clients[MAX_CLIENTS];
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // TODO implement
-void *handle_client(void *arg);
+void *handle_client(void *arg) {};
 
 Client *get_client(int *client_id)
 {
     for (int i = 0; i < MAX_CLIENTS; i++)
         if (clients[i].socket_id == *client_id)
             return &clients[i];
+
+    return NULL;
 }
 
 Client *add_client(int *client_id)
@@ -38,7 +36,7 @@ Client *add_client(int *client_id)
 };
 
 // TODO implement
-void remove_client(int *client_id);
+void remove_client(int *client_id) {};
 
 // Should be executed in a separate thread to simulate different clients
 // connecting to the server.
