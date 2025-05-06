@@ -49,8 +49,7 @@ void llist_push(LinkedList *llist, void *data)
     llist->size++;
 }
 
-// TODO review code
-void llist_remove(LinkedList *llist, void *data)
+int llist_remove(LinkedList *llist, void *data)
 {
     Node *current = llist->head;
     Node *previous = NULL;
@@ -69,10 +68,13 @@ void llist_remove(LinkedList *llist, void *data)
 
             free(current);
             llist->size--;
-            return;
+
+            return 0;
         }
 
         previous = current;
         current = current->next;
     }
+
+    return -1;
 }
