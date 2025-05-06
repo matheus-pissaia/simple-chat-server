@@ -1,12 +1,16 @@
+#include <pthread.h>
 #include "client.c"
+#include "llist.c"
 
 #define MAX_ROOMS 10
 #define MAX_CLIENTS_PER_ROOM 10
 
+// TODO test code
+
 typedef struct
 {
     int id;
-    Client *clients[MAX_CLIENTS_PER_ROOM];
+    LinkedList *clients;
     int client_count;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
@@ -14,22 +18,36 @@ typedef struct
 
 Room rooms[MAX_ROOMS];
 
+void init_rooms()
+{
+    for (int i = 0; i < MAX_ROOMS; i++)
+    {
+        rooms[i].id = i;
+        rooms[i].clients = llist_create();
+        rooms[i].client_count = 0;
+        pthread_mutex_init(&rooms[i].mutex, NULL);
+        pthread_cond_init(&rooms[i].cond, NULL);
+    }
+}
+
 Room *get_room(const int *room_id)
 {
     for (int i = 0; i < MAX_ROOMS; i++)
         if (rooms[i].id == room_id)
             return &rooms[i];
+
+    return NULL;
 }
 
 int join_room(const int *room_id, Client *client)
 {
     Room *room = get_room(room_id);
 
-    if (room->client_count < MAX_CLIENTS_PER_ROOM)
+    if (room != NULL && room->client_count < MAX_CLIENTS_PER_ROOM)
     {
         pthread_mutex_lock(&room->mutex);
 
-        room->clients[room->client_count] = client;
+        llist_push(room->clients, client);
         room->client_count++;
 
         pthread_mutex_unlock(&room->mutex);
@@ -40,22 +58,19 @@ int join_room(const int *room_id, Client *client)
     return -1;
 }
 
-int leave_room(const int *room_id, Client *client)
+void leave_room(const int *room_id, Client *client)
 {
     Room *room = get_room(room_id);
 
+    if (room == NULL)
+        return;
+
     pthread_mutex_lock(&room->mutex);
 
-    for (int i = 0; i < room->client_count; i++)
-        if (room->clients[i] == client)
-        // TODO We should use a linked list, since this duplicates items.
-        {
-            room->clients[i] = room->clients[room->client_count - 1];
-            room->client_count--;
-            break;
-        }
+    int status = llist_remove(room->clients, client);
+
+    if (status == 0)
+        room->client_count--;
 
     pthread_mutex_unlock(&room->mutex);
-
-    return 0;
 }
