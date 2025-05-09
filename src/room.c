@@ -3,8 +3,7 @@
 #include "client.h"
 #include "llist.h"
 
-#define MAX_ROOMS 10
-#define MAX_CLIENTS_PER_ROOM 10
+
 
 // TODO test code
 
@@ -12,6 +11,7 @@ Room rooms[MAX_ROOMS];
 
 void init_rooms()
 {
+    printf("Inicializando salas...\n");
     for (int i = 0; i < MAX_ROOMS; i++)
     {
         rooms[i].id = i;
