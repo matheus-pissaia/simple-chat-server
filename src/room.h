@@ -5,6 +5,9 @@
 #include "client.h"
 #include "llist.h"
 
+#define MAX_ROOMS 10
+#define MAX_CLIENTS_PER_ROOM 10
+
 typedef struct
 {
     int id;

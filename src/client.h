@@ -4,6 +4,7 @@
 typedef struct
 {
     int socket_id;
+    int current_room;
 } Client;
 
 void *handle_client(void *arg);
