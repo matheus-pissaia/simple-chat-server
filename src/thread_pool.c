@@ -6,10 +6,16 @@
 
 #define MAX_THREADS 10
 
-LinkedList *task_queue = NULL;
-pthread_t threads[MAX_THREADS];
-pthread_cond_t task_queue_has_jobs = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t task_queue_rwmutex = PTHREAD_MUTEX_INITIALIZER;
+static LinkedList *task_queue = NULL;
+static pthread_t threads[MAX_THREADS];
+static pthread_cond_t task_queue_has_jobs = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t task_queue_rwmutex = PTHREAD_MUTEX_INITIALIZER;
+
+// ========================= PROTOTYPES =========================
+
+static void *thread_do();
+
+// ========================= THREAD POOL ========================
 
 // Initializes the thread pool and task queue
 void thread_pool_init()
@@ -21,7 +27,7 @@ void thread_pool_init()
     for (int i = 0; i < MAX_THREADS; i++)
     {
         pthread_create(&threads[i], NULL, thread_do, NULL);
-        pthread_detach(threads[i]); // Detach the thread to avoid memory leaks
+        pthread_detach(threads[i]); // Detach the thread to avoid calling join
     }
 }
 
@@ -43,8 +49,10 @@ void thread_pool_add_task(void (*function_p)(void *), void *arg_p)
     pthread_mutex_unlock(&task_queue_rwmutex);
 }
 
+// ========================= THREAD =============================
+
 // What each thread is doing
-void *thread_do()
+static void *thread_do()
 {
     while (1)
     {
@@ -74,4 +82,6 @@ void *thread_do()
 
         pthread_mutex_unlock(&task_queue_rwmutex);
     }
+
+    return NULL;
 }
