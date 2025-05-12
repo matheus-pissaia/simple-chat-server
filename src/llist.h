@@ -1,7 +1,7 @@
 #ifndef LLIST_H
 #define LLIST_H
 
-typedef struct
+typedef struct Node
 {
     void *data;
     struct Node *next;
