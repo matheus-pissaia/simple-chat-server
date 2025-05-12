@@ -15,6 +15,7 @@ typedef struct
 } LinkedList;
 
 LinkedList *llist_create();
+Node *llist_pop(LinkedList *llist);
 void llist_push(LinkedList *llist, void *data);
 int llist_remove(LinkedList *llist, void *data);
 

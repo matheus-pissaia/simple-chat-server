@@ -66,3 +66,19 @@ int llist_remove(LinkedList *llist, void *data)
 
     return -1;
 }
+
+Node *llist_pop(LinkedList *llist)
+{
+    Node *node = llist->head;
+
+    if (node != NULL)
+    {
+        llist->head = node->next;
+        llist->size--;
+
+        if (llist->size == 0)
+            llist->tail = NULL;
+    }
+
+    return node;
+}
