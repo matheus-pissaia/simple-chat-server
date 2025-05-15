@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "llist.h"
 
+// Create a new linked list
 LinkedList *llist_create()
 {
     LinkedList *llist = (LinkedList *)malloc(sizeof(LinkedList));
@@ -16,6 +17,7 @@ LinkedList *llist_create()
     return llist;
 }
 
+// Push a new node to the end of the linked list
 void llist_push(LinkedList *llist, void *data)
 {
     Node *node = (Node *)malloc(sizeof(Node));
@@ -37,6 +39,7 @@ void llist_push(LinkedList *llist, void *data)
     llist->size++;
 }
 
+// Remove a node from the linked list
 int llist_remove(LinkedList *llist, void *data)
 {
     Node *current = llist->head;
@@ -65,4 +68,21 @@ int llist_remove(LinkedList *llist, void *data)
     }
 
     return -1;
+}
+
+// Pop the first node from the linked list
+Node *llist_pop(LinkedList *llist)
+{
+    Node *node = llist->head;
+
+    if (node != NULL)
+    {
+        llist->head = node->next;
+        llist->size--;
+
+        if (llist->size == 0)
+            llist->tail = NULL;
+    }
+
+    return node;
 }
