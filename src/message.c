@@ -154,7 +154,7 @@ void* message_consumer(void *arg) {
     int room_id = *((int*)arg);
     free(arg);
     
-    printf("🔄 Iniciando consumidor de mensagens para Sala #%d\n", room_id);
+    printf("Iniciando consumidor de mensagens para Sala #%d\n", room_id);
     
     while (1) {
         // Recupera a próxima mensagem da fila
