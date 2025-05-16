@@ -1,56 +1,75 @@
 # Simple Chat Server
 
-TODO add description
+Um servidor de chat simples implementado em C que utiliza threads para lidar com múltiplos clientes simultâneos e implementa o padrão produtor/consumidor para gerenciamento de mensagens. Este projeto demonstra conceitos importantes de programação concorrente e design patterns.
 
-## How to run
 
-1. Compile the project running the `make` command in the root folder:
+## Como Executar
+
+1. Compile o projeto executando o comando `make` na pasta raiz:
 
 ```bash
 make
 ```
 
-2. Execute the server from generated binaries:
+2. Execute o servidor :
 
 ```bash
 ./bin/a.out
 ```
 
-# TODOs
+## Arquitetura do Sistema
 
-@dev
+O sistema é composto pelos seguintes componentes principais:
 
-We need to create a dedicated thread to handle each client "on connect" - For now, we will focus on implementing core functionalities, so the client connection and all actions should be simulated. After implementing all core features, we can create a real server with sockets.
+### Salas (Rooms)
 
-- [ ] Generate rooms.
-- [ ] Generate fake clients.
-- [ ] Handle client join room.
-- [ ] Handle client leave room.
-- [ ] Handle client send message inside room.
-- [ ] Handle client receive message inside room.
+- Cada sala pode conter múltiplos clientes
+- As salas possuem uma fila de mensagens
+- Implementação em: `room.c` e `room.h`
 
-## Design Patterns
+### Clientes (Clients)
 
-Some ideas of design patterns that we could implement for this project:
+- Simulação de clientes que entram/saem de salas e enviam mensagens
+- Implementação em: `client.c` e `client.h`
+
+### Mensagens (Messages)
+
+- Sistema de mensagens com timestamp e informações do remetente
+- Implementação do padrão produtor/consumidor para processamento assíncrono
+- Implementação em: `message.c` e `message.h`
+
+### Pool de Threads
+
+- Gerenciamento eficiente de threads para processamento de tarefas
+- Implementação em: `thread_pool.c` e `thread_pool.h`
+
+### Lista Encadeada (Linked List)
+
+- Estrutura de dados para armazenar clientes nas salas
+- Implementação em: `llist.c` e `llist.h`
+
+## Design Patterns Implementados
 
 ### Thread Pool
 
-Instead of creating a thread for each client, we keep a fixed pool of threads ready to process connections or message queues.
+Em vez de criar uma thread para cada cliente, mantemos um conjunto fixo de threads pronto para processar conexões ou filas de mensagens. Isto melhora o desempenho e gerencia os recursos do sistema de forma mais eficiente.
 
-### Producer / Consumer
+### Produtor / Consumidor
 
-In each room, producer threads queue messages in a buffer, and consumer threads remove them to send (broadcast). In this way we separate who generates the message (client) from who sends it, decoupling socket reading and broadcast writing.
+Em cada sala, threads produtoras enfileiram mensagens em um buffer, e threads consumidoras as removem para enviar (broadcast). Desta forma, separamos quem gera a mensagem (cliente) de quem a envia, desacoplando a leitura do socket e a escrita do broadcast.
 
-### Controlled Suspension
+Implementação:
+- Os clientes atuam como produtores ao enviar mensagens
+- Cada sala possui uma thread consumidora que processa mensagens da fila
+- A fila de mensagens é sincronizada usando mutex e variáveis de condição
 
-Suspend consumer thread when the message queue is empty to avoid CPU spinlock, using something like:
+### Suspensão Controlada
 
-```C
-pthread_cond_wait(&room.cond, &room.mutex)
-```
+Suspendemos a thread consumidora quando a fila de mensagens está vazia para evitar CPU spinlock.
 
-And wake up when there's a new message:
+## Melhorias
 
-```C
-pthread_cond_signal(&room.cond)
-```
+- Implementação de sockets para clientes reais
+- Interface de usuário (CLI ou GUI)
+- Persistência de mensagens
+
