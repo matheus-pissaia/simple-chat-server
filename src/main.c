@@ -36,25 +36,18 @@ int main()
     printf("Iniciando simulação com %d clientes (delay de %d segundo(s) entre conexões)\n\n",
            NUM_CLIENTS, CLIENT_CREATION_DELAY);
 
-    pthread_t threads[NUM_CLIENTS];
-
     // Cria threads para simular clientes com um intervalo para melhor visualização
     for (int i = 0; i < NUM_CLIENTS; i++)
     {
-        pthread_create(&threads[i], NULL, create_fake_client, NULL);
+        thread_pool_add_task((void *)create_fake_client, NULL);
 
         // Pausa entre a criação de clientes para melhor visualização
         if (i < NUM_CLIENTS - 1)
-        {
             sleep(CLIENT_CREATION_DELAY);
-        }
     }
 
-    // Espera todas as threads terminarem
-    for (int i = 0; i < NUM_CLIENTS; i++)
-    {
-        pthread_join(threads[i], NULL);
-    }
+    // Aguarda a conclusão de todas as tarefas antes de encerrar a simulação
+    thread_pool_wait();
 
     printf("\n╔══════════════════════════════════════════════════════════════╗\n");
     printf("║                    SIMULAÇÃO CONCLUÍDA                       ║\n");
