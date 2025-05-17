@@ -6,8 +6,12 @@
 
 #define MAX_THREADS 10
 
-static LinkedList *task_queue = NULL;
 static pthread_t threads[MAX_THREADS];
+static volatile int num_threads_working = 0;
+static pthread_cond_t threads_all_idle = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t thread_count_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static LinkedList *task_queue = NULL;
 static pthread_cond_t task_queue_has_jobs = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t task_queue_rwmutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -49,6 +53,17 @@ void thread_pool_add_task(void (*function_p)(void *), void *arg_p)
     pthread_mutex_unlock(&task_queue_rwmutex);
 }
 
+// Wait for all queued tasks to finish
+void thread_pool_wait()
+{
+    pthread_mutex_lock(&thread_count_mutex);
+
+    while (task_queue->size > 0 || num_threads_working > 0)
+        pthread_cond_wait(&threads_all_idle, &thread_count_mutex);
+
+    pthread_mutex_unlock(&thread_count_mutex);
+}
+
 // ========================= THREAD =============================
 
 // What each thread is doing
@@ -62,8 +77,15 @@ static void *thread_do()
         while (task_queue->size == 0)
             pthread_cond_wait(&task_queue_has_jobs, &task_queue_rwmutex);
 
+        // Mark the thread as working
+        pthread_mutex_lock(&thread_count_mutex);
+        num_threads_working++;
+        pthread_mutex_unlock(&thread_count_mutex);
+
         // Get next task from the queue
         Node *node = llist_pop(task_queue);
+
+        pthread_mutex_unlock(&task_queue_rwmutex);
 
         if (node)
         {
@@ -80,7 +102,15 @@ static void *thread_do()
             free(node);
         }
 
-        pthread_mutex_unlock(&task_queue_rwmutex);
+        // Mark the thread as idle
+        pthread_mutex_lock(&thread_count_mutex);
+        num_threads_working--;
+
+        // Signal that all threads are idle if there are no working threads
+        if (!num_threads_working)
+            pthread_cond_signal(&threads_all_idle);
+
+        pthread_mutex_unlock(&thread_count_mutex);
     }
 
     return NULL;
