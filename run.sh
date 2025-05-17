@@ -5,7 +5,7 @@ set -e
 
 echo "Compiling code..."
 
-make
+make rebuild
 
 # Run the compiled code.
 echo "Running code..."
