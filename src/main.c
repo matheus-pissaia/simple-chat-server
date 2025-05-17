@@ -16,8 +16,8 @@ int main()
     // Inicializa o gerador de números aleatórios
     srand(time(NULL));
     
-    // Limpa a tela para melhor visualização
-    printf("\033[H\033[J");  // Códigos ANSI para limpar a tela
+    // Limpa a tela para melhor visualização (apenas para sistemas Unix)
+    system("clear");
     
     printf("\n");
     printf("╔══════════════════════════════════════════════════════════════╗\n");
