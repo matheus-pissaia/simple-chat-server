@@ -1,6 +1,6 @@
 # Simple Chat Server
 
-Um servidor de chat simples implementado em C que utiliza threads para lidar com múltiplos clientes simultâneos e implementa o padrão produtor/consumidor para gerenciamento de mensagens. Este projeto demonstra conceitos importantes de programação concorrente e design patterns.
+Um servidor de chat simples implementado em C que utiliza thread pool para lidar com múltiplos clientes simultâneos e tarefas para gerenciamento de mensagens. Este projeto demonstra conceitos importantes de programação concorrente e design patterns.
 
 ## Como Executar
 
@@ -28,7 +28,7 @@ O sistema é composto pelos seguintes componentes principais:
 ### Mensagens (Messages)
 
 -   Sistema de mensagens com timestamp e informações do remetente
--   Implementação do padrão produtor/consumidor para processamento assíncrono
+-   Implementação de broadcast de mensagem para todos os clientes da sala
 -   Implementação em: `message.c` e `message.h`
 
 ### Pool de Threads
@@ -51,17 +51,11 @@ Em vez de criar uma thread para cada cliente, mantemos um conjunto fixo de threa
 
 Em cada sala, threads produtoras enfileiram mensagens em um buffer, e threads consumidoras as removem para enviar (broadcast). Desta forma, separamos quem gera a mensagem (cliente) de quem a envia, desacoplando a leitura do socket e a escrita do broadcast.
 
-Implementação:
-
--   Os clientes atuam como produtores ao enviar mensagens
--   Cada sala possui uma thread consumidora que processa mensagens da fila
--   A fila de mensagens é sincronizada usando mutex e variáveis de condição
-
 ### Suspensão Controlada
 
-Suspendemos a thread consumidora quando a fila de mensagens está vazia para evitar CPU spinlock.
+Suspendemos a thread consumidora quando a fila de tarefas está vazia para evitar CPU spinlock.
 
-## Melhorias
+## Melhorias a serem feitas
 
 -   Implementação de sockets para clientes reais
 -   Interface de usuário (CLI ou GUI)
