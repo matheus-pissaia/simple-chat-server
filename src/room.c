@@ -12,9 +12,6 @@ void init_rooms()
     printf("\n===== INICIALIZAÇÃO DO SERVIDOR =====\n");
     printf("Criando %d salas de chat...\n", MAX_ROOMS);
 
-    // Inicializa as filas de mensagens primeiro
-    init_message_queues();
-
     for (int i = 0; i < MAX_ROOMS; i++)
     {
         rooms[i].id = i;
@@ -23,8 +20,6 @@ void init_rooms()
         pthread_mutex_init(&rooms[i].mutex, NULL);
         pthread_cond_init(&rooms[i].cond, NULL);
 
-        // Inicia um consumidor de mensagens para cada sala depois de inicializar as filas
-        start_message_consumer(i);
         printf("✓ Sala #%d criada e inicializada\n", i);
     }
 
