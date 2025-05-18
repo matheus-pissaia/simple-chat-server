@@ -47,10 +47,6 @@ O sistema é composto pelos seguintes componentes principais:
 
 Em vez de criar uma thread para cada cliente, mantemos um conjunto fixo de threads pronto para processar conexões ou filas de mensagens. Isto melhora o desempenho e gerencia os recursos do sistema de forma mais eficiente.
 
-### Produtor / Consumidor
-
-Em cada sala, threads produtoras enfileiram mensagens em um buffer, e threads consumidoras as removem para enviar (broadcast). Desta forma, separamos quem gera a mensagem (cliente) de quem a envia, desacoplando a leitura do socket e a escrita do broadcast.
-
 ### Suspensão Controlada
 
 Suspendemos a thread consumidora quando a fila de tarefas está vazia para evitar CPU spinlock.
