@@ -5,7 +5,7 @@
 #include "client.h"
 #include "llist.h"
 
-#define MAX_ROOMS 10
+#define MAX_ROOMS 2 // Small amount since we are simulating with a low number of clients
 #define MAX_CLIENTS_PER_ROOM 10
 
 typedef struct
