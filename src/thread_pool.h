@@ -36,4 +36,9 @@ void thread_pool_init();
  */
 void thread_pool_add_task(void (*function_p)(void *), void *arg_p);
 
+/**
+ * @brief Wait for all queued tasks to finish.
+ */
+void thread_pool_wait();
+
 #endif

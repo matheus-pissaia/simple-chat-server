@@ -117,7 +117,7 @@ void send_client_message(Client *client, const char *content)
 }
 
 // Simula a chegada de um cliente e suas ações no servidor
-void *create_fake_client(void *arg)
+void *create_fake_client()
 {
     // Gera um ID aleatório para o cliente
     int client_id = rand() % 1000;
